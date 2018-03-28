@@ -223,7 +223,12 @@ module.exports = function(RED) {
                         }
                     }
                 }
-            } catch(err) {/*console.log(err.stack)*/}
+            } catch (err) {
+                /*console.log(err.stack)*/
+                if (err.name === "ContextError") {
+                    throw err;
+                }
+            }
             return msg;
         }
         if (valid) {
