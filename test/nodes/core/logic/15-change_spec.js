@@ -439,7 +439,7 @@ describe('change Node', function() {
                         });
                         logEvents.should.have.length(1);
                         logEvents[0][0].should.have.a.property('msg');
-                        logEvents[0][0].msg.toString().should.startWith("ContextError: noexist is not defined in contextStorage on settings.js");
+                        logEvents[0][0].msg.toString().should.equal("ContextError");
                         done();
                     }
                     catch(e) { done(e); }
