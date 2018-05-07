@@ -355,7 +355,7 @@ RED.nodes = (function() {
         RED.nodes.registerType("subflow:"+sf.id, {
             defaults:{name:{value:""}},
             info: sf.info,
-            icon:"subflow.png",
+            icon: function() { return sf.icon||"subflow.png" },
             category: "subflows",
             inputs: sf.in.length,
             outputs: sf.out.length,
@@ -550,7 +550,11 @@ RED.nodes = (function() {
         if (node.out.length > 0 && n.outputLabels && !/^\s*$/.test(n.outputLabels.join(""))) {
             node.outputLabels = n.outputLabels.slice();
         }
-
+        if (n.icon) {
+            if (n.icon !== "node-red/subflow.png") {
+                node.icon = n.icon;
+            }
+        }
 
         return node;
     }
@@ -749,7 +753,7 @@ RED.nodes = (function() {
         if (!isInitialLoad && unknownTypes.length > 0) {
             var typeList = "<ul><li>"+unknownTypes.join("</li><li>")+"</li></ul>";
             var type = "type"+(unknownTypes.length > 1?"s":"");
-            RED.notify("<strong>"+RED._("clipboard.importUnrecognised",{count:unknownTypes.length})+"</strong>"+typeList,"error",false,10000);
+            RED.notify("<p>"+RED._("clipboard.importUnrecognised",{count:unknownTypes.length})+"</p>"+typeList,"error",false,10000);
         }
 
         var activeWorkspace = RED.workspaces.active();
@@ -1008,6 +1012,13 @@ RED.nodes = (function() {
                                     set: registry.getNodeSet("node-red/unknown")
                                 };
                                 node.users = [];
+                                // This is a config node, so delete the default
+                                // non-config node properties
+                                delete node.x;
+                                delete node.y;
+                                delete node.wires;
+                                delete node.inputLabels;
+                                delete node.outputLabels;
                             }
                             var orig = {};
                             for (var p in n) {
@@ -1022,6 +1033,11 @@ RED.nodes = (function() {
                         if (node._def.category != "config") {
                             node.inputs = n.inputs||node._def.inputs;
                             node.outputs = n.outputs||node._def.outputs;
+                            // If 'wires' is longer than outputs, clip wires
+                            if (node.hasOwnProperty('wires') && node.wires.length > node.outputs) {
+                                node.wires = node.wires.slice(0,node.outputs);
+                                wireClippedNodes.push(node);
+                            }
                             for (d in node._def.defaults) {
                                 if (node._def.defaults.hasOwnProperty(d)) {
                                     node[d] = n[d];
@@ -1043,7 +1059,9 @@ RED.nodes = (function() {
                     addNode(node);
                     RED.editor.validateNode(node);
                     node_map[n.id] = node;
-                    if (node._def.category != "config") {
+                    // If an 'unknown' config node, it will not have been caught by the
+                    // proper config node handling, so needs adding to new_nodes here
+                    if (node.type === "unknown" || node._def.category !== "config") {
                         new_nodes.push(node);
                     }
                 }
