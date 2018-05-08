@@ -70,8 +70,8 @@
         }
     },
     "catch": {
-        "catch": "catch all",
-        "catchNodes": "catch (__number__)",
+        "catch": "catch: all",
+        "catchNodes": "catch: __number__",
         "label": {
             "source": "Catch errors from",
             "node": "node",
@@ -86,8 +86,8 @@
         }
     },
     "status": {
-        "status": "status (all)",
-        "statusNodes": "status (__number__)",
+        "status": "status: all",
+        "statusNodes": "status: __number__",
         "label": {
             "source": "Report status from",
             "node": "node",
@@ -166,6 +166,8 @@
         }
     },
     "exec": {
+        "exec": "exec",
+        "spawn": "spawn",
         "label": {
             "command": "Command",
             "append": "Append",
@@ -184,6 +186,7 @@
         "oldrc": "Use old style output (compatibility mode)"
     },
     "function": {
+        "function": "",
         "label": {
             "function": "Function",
             "outputs": "Outputs"
@@ -195,6 +198,7 @@
         "tip": "See the Info tab for help writing functions."
     },
     "template": {
+        "template": "template",
         "label": {
             "template": "Template",
             "property": "Set property",
@@ -301,6 +305,7 @@
         }
     },
     "comment": {
+        "comment": "comment",
         "label": {
             "title": "Title",
             "body": "Body"
@@ -416,6 +421,7 @@
         }
     },
     "watch": {
+        "watch": "watch",
         "label": {
             "files": "File(s)",
             "recursive": "Watch sub-directories recursively"
@@ -489,15 +495,15 @@
             "using": "using",
             "output": "Output",
             "group": "Group",
-            "interface": "Local IP",
-            "interfaceprompt": "(optional) local ip address to bind to",
+            "interface": "Local IF",
             "send": "Send a",
             "toport": "to port",
             "address": "Address",
             "decode-base64": "Decode Base64 encoded payload?"
         },
         "placeholder": {
-            "interface": "(optional) ip address of eth0",
+            "interface": "(optional) local interface or address to bind to",
+            "interfaceprompt": "(optional) local interface or address to bind to",
             "address": "destination ip"
         },
         "udpmsgs": "udp messages",
@@ -525,10 +531,11 @@
             "mc-group": "udp multicast group __group__",
             "listener-stopped": "udp listener stopped",
             "output-stopped": "udp output stopped",
-            "mc-ready": "udp multicast ready: __outport__ -> __host__:__port__",
+            "mc-ready": "udp multicast ready: __iface__:__outport__ -> __host__:__port__",
             "bc-ready": "udp broadcast ready: __outport__ -> __host__:__port__",
             "ready": "udp ready: __outport__ -> __host__:__port__",
-            "ready-nolocal": "udp ready: __host__:__port__"
+            "ready-nolocal": "udp ready: __host__:__port__",
+            "re-use": "udp re-use socket: __outport__ -> __host__:__port__"
         },
         "errors": {
             "access-error": "UDP access error, you may need root access for ports below 1024",
@@ -538,10 +545,12 @@
             "ip-notset": "udp: ip address not set",
             "port-notset": "udp: port not set",
             "port-invalid": "udp: port number not valid",
-            "alreadyused": "udp: port already in use"
+            "alreadyused": "udp: port __port__ already in use",
+            "ifnotfound": "udp: interface __iface__ not found"
         }
     },
     "switch": {
+        "switch": "switch",
         "label": {
             "property": "Property",
             "rule": "rule",
@@ -559,6 +568,7 @@
             "false":"is false",
             "null":"is null",
             "nnull":"is not null",
+            "istype":"is of type",
             "head":"head",
             "tail":"tail",
             "index":"index between",
@@ -597,6 +607,7 @@
         }
     },
     "range": {
+        "range": "range",
         "label": {
             "action": "Action",
             "inputrange": "Map the input range",
@@ -663,7 +674,8 @@
     "html": {
         "label": {
             "select": "Selector",
-            "output": "Output"
+            "output": "Output",
+            "in": "in"
         },
         "output": {
             "html": "the html content of the elements",
@@ -763,7 +775,9 @@
         "status": {
             "stopped": "stopped",
             "closed": "closed",
-            "not-running": "not running"
+            "not-running": "not running",
+            "not-available": "not available",
+            "na": "N/A : __value__"
         },
         "errors": {
             "ignorenode": "Ignoring Raspberry Pi specific node",
@@ -782,6 +796,7 @@
         }
     },
     "tail": {
+        "tail": "tail",
         "label": {
             "filename": "Filename",
             "type": "File type",
@@ -835,6 +850,7 @@
         "tip": "Tip: The filename should be an absolute path, otherwise it will be relative to the working directory of the Node-RED process."
     },
     "split": {
+        "split": "split",
         "intro":"Split <code>msg.payload</code> based on type:",
         "object":"<b>Object</b>",
         "objectSend":"Send a message for each key/value pair",
@@ -846,6 +862,7 @@
         "addname":" Copy key to "
     },
     "join":{
+        "join": "join",
         "mode":{
             "mode":"Mode",
             "auto":"automatic",
@@ -892,6 +909,7 @@
         }
     },
     "sort" : {
+        "sort": "sort",
         "target" : "Sort",
         "seq" : "message sequence",
         "key" : "Key",
@@ -905,6 +923,7 @@
         "clear" : "clear pending message in sort node"
     },
     "batch" : {
+        "batch": "batch",
         "mode": {
             "label" : "Mode",
             "num-msgs" : "Group by number of messages",
