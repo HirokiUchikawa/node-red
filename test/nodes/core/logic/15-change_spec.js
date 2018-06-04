@@ -427,6 +427,26 @@ describe('change Node', function() {
             });
         });
 
+        it('should fail when specified invalid context storage', function(done) {
+            var flow = [{"id":"changeNode1","type":"change",rules:[{"t":"set","p":"payload","to":"$noexist.val","tot":"global"}],"name":"changeNode","wires":[["helperNode1"]]},
+                        {id:"helperNode1", type:"helper", wires:[]}];
+            helper.load(changeNode, flow, function() {
+                var changeNode1 = helper.getNode("changeNode1");
+                setTimeout(function() {
+                    try {
+                        var logEvents = helper.log().args.filter(function(evt) {
+                            return evt[0].type == "change";
+                        });
+                        logEvents.should.have.length(1);
+                        logEvents[0][0].should.have.a.property('msg');
+                        logEvents[0][0].msg.toString().should.equal("ContextError");
+                        done();
+                    }
+                    catch(e) { done(e); }
+                },20);
+                changeNode1.receive({payload:""});
+            });
+        });
     });
     describe('#change', function() {
         it('changes the value of the message property', function(done) {
