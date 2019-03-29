@@ -265,6 +265,97 @@ describe('memory',function() {
         });
     });
 
+    describe('#incr',function() {
+        describe('sync',function() {
+            it('should increment property',function() {
+                should.not.exist(context.get("nodeX","foo"));
+                context.incr("nodeX","foo").should.equal(1);
+                context.incr("nodeX","foo").should.equal(2);
+            });
+
+            it('should increment property by passed amount',function() {
+                should.not.exist(context.get("nodeX","foo"));
+                context.incr("nodeX","foo",5).should.equal(5);
+                context.incr("nodeX","foo",10).should.equal(15);
+            });
+
+            it('should decrement property by passed negative amount',function() {
+                should.not.exist(context.get("nodeX","foo"));
+                context.incr("nodeX","foo",-5).should.equal(-5);
+                context.incr("nodeX","foo",-10).should.equal(-15);
+            });
+
+            it('should not shared context with other scope', function() {
+                should.not.exist(context.get("nodeX","foo"));
+                should.not.exist(context.get("nodeY","foo"));
+                context.incr("nodeX","foo");
+                context.incr("nodeY","foo");
+
+                context.get("nodeX","foo").should.equal(1);
+                context.get("nodeY","foo").should.equal(1);
+            });
+
+            it('should throw the error if the error occurs', function() {
+                (function(){ context.incr("nodeX",".foo"); }).should.throw();
+                context.set("nodeX","foo","bar");
+                (function(){ context.incr("nodeX","foo","string"); }).should.throw();
+            });
+        });
+
+        describe('async',function() {
+            it('should increment property',function(done) {
+                context.get("nodeX","foo",function(err, value){
+                    should.not.exist(value);
+                    context.incr("nodeX","foo",undefined,function(err, value){
+                        value.should.equal(1);
+                        context.incr("nodeX","foo",undefined,function(err, value){
+                            value.should.equal(2);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            it('should increment property by passed amount',function(done) {
+                context.get("nodeX","foo",function(err, value){
+                    should.not.exist(value);
+                    context.incr("nodeX","foo",5,function(err, value){
+                        value.should.equal(5);
+                        context.incr("nodeX","foo",10,function(err, value){
+                            value.should.equal(15);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            it('should decrement property by passed negative amount',function(done) {
+                context.get("nodeX","foo",function(err, value){
+                    should.not.exist(value);
+                    context.incr("nodeX","foo",-5,function(err, value){
+                        value.should.equal(-5);
+                        context.incr("nodeX","foo",-10,function(err, value){
+                            value.should.equal(-15);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            it('should pass the error to callback if the error occurs',function(done) {
+                context.incr("nodeX",".foo",undefined,function(err,value){
+                    should.exist(err);
+                    context.set("nodeX","foo","bar",function(err){
+                        context.incr("nodeX","foo","string",function(err){
+                            should.exist(err);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
     describe('#delete',function() {
         it('should delete context',function() {
             should.not.exist(context.get("nodeX","foo"));

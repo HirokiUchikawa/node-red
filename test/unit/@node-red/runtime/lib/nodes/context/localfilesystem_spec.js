@@ -455,6 +455,86 @@ describe('localfilesystem',function() {
         });
     });
 
+    describe('#incr',function() {
+        var context;
+        beforeEach(function() {
+            context = LocalFileSystem({dir: resourcesDir, cache: false});
+            return context.open();
+        });
+
+        afterEach(function() {
+            return context.clean([]).then(function(){
+                return context.close();
+            }).then(function(){
+                return fs.remove(resourcesDir);
+            });
+        });
+
+        it('should increment property',function(done) {
+            context.get("nodeX","foo",function(err, value){
+                if (err) { return done(err); }
+                should.not.exist(value);
+                context.incr("nodeX","foo",undefined,function(err,value){
+                    if (err) { return done(err); }
+                    value.should.be.equal(1);
+                    context.incr("nodeX","foo",undefined,function(err,value){
+                        if (err) { return done(err); }
+                        value.should.be.equal(2);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('should increment property by passed amount',function(done) {
+            context.get("nodeX","foo",function(err, value){
+                if (err) { return done(err); }
+                should.not.exist(value);
+                context.incr("nodeX","foo",5,function(err,value){
+                    if (err) { return done(err); }
+                    value.should.be.equal(5);
+                    context.incr("nodeX","foo",10,function(err,value){
+                        if (err) { return done(err); }
+                        value.should.be.equal(15);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('should decrement property by passed negative amount',function(done) {
+            context.get("nodeX","foo",function(err, value){
+                if (err) { return done(err); }
+                should.not.exist(value);
+                context.incr("nodeX","foo",-5,function(err,value){
+                    if (err) { return done(err); }
+                    value.should.be.equal(-5);
+                    context.incr("nodeX","foo",-10,function(err,value){
+                        if (err) { return done(err); }
+                        value.should.be.equal(-15);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('should throw error if bad key included', function(done) {
+            context.incr("nodeX",".foo",undefined, function(err) {
+                should.exist(err);
+                done();
+            });
+        });
+
+        it('should throw error if value of key is not a number', function(done) {
+            context.set("nodeX","foo","bar", function(err) {
+                context.incr("nodeX","foo",5,function(err,one) {
+                    should.not.exist(one);
+                    done();
+                });
+            });
+        });
+    });
+
     describe('#delete',function() {
         var context;
         beforeEach(function() {
@@ -698,6 +778,70 @@ describe('localfilesystem',function() {
                 keys.should.have.length(2);
                 keys[1].should.equal("foo2");
             })
+        });
+
+        it('should increment property in the cache',function() {
+            context = LocalFileSystem({dir: resourcesDir, cache: true, flushInterval: 1});
+            return context.open().then(function(){
+                return new Promise(function(resolve, reject){
+                    context.incr("global","foo",undefined,function(err, value){
+                        if(err){
+                            reject(err);
+                        } else {
+                            value.should.be.equal(1);
+                            fs.readJson(path.join(resourcesDir,defaultContextBase,"global","global.json")).then(function(data) {
+                                // File should not exist as flush hasn't happened
+                                reject("File global/global.json should not exist");
+                            }).catch(function(err) {
+                                setTimeout(function() {
+                                    fs.readJson(path.join(resourcesDir,defaultContextBase,"global","global.json")).then(function(data) {
+                                        data.should.eql({foo:1});
+                                        resolve();
+                                    }).catch(function(err) {
+                                        reject(err);
+                                    });
+                                },1100);
+                            });
+                        }
+                    });
+                });
+            }).then(function(){
+                return fs.remove(path.join(resourcesDir,defaultContextBase,"global","global.json"));
+            }).then(function(){
+                context.get("global","foo").should.be.equal(1);
+            });
+        });
+
+        it('should decrement property in the cache',function() {
+            context = LocalFileSystem({dir: resourcesDir, cache: true, flushInterval: 1});
+            return context.open().then(function(){
+                return new Promise(function(resolve, reject){
+                    context.incr("global","foo",-1,function(err, value){
+                        if(err){
+                            reject(err);
+                        } else {
+                            value.should.be.equal(-1);
+                            fs.readJson(path.join(resourcesDir,defaultContextBase,"global","global.json")).then(function(data) {
+                                // File should not exist as flush hasn't happened
+                                reject("File global/global.json should not exist");
+                            }).catch(function(err) {
+                                setTimeout(function() {
+                                    fs.readJson(path.join(resourcesDir,defaultContextBase,"global","global.json")).then(function(data) {
+                                        data.should.eql({foo:-1});
+                                        resolve();
+                                    }).catch(function(err) {
+                                        reject(err);
+                                    });
+                                },1100);
+                            });
+                        }
+                    });
+                });
+            }).then(function(){
+                return fs.remove(path.join(resourcesDir,defaultContextBase,"global","global.json"));
+            }).then(function(){
+                context.get("global","foo").should.be.equal(-1);
+            });
         });
 
         it('should delete context in the cache',function() {

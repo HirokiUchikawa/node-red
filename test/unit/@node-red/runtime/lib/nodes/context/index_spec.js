@@ -225,6 +225,27 @@ describe('context', function() {
             });
         })
 
+        it('increments local property',function() {
+            var context = Context.get("1","flowA");
+            should.not.exist(context.get("foo"));
+            context.incr("foo").should.equal(1);
+            context.incr("foo").should.equal(2);
+        });
+
+        it('increments local property by passed amount',function() {
+            var context = Context.get("1","flowA");
+            should.not.exist(context.get("foo"));
+            context.incr("foo",5).should.equal(5);
+            context.incr("foo",10).should.equal(15);
+        });
+
+        it('decrements local property by passed negative amount',function() {
+            var context = Context.get("1","flowA");
+            should.not.exist(context.get("foo"));
+            context.incr("foo",-5).should.equal(-5);
+            context.incr("foo",-10).should.equal(-15);
+        });
+
         describe("$parent", function() {
             it('should get undefined for $parent without key', function() {
                 var context0 = Context.get("0","flowA");
@@ -266,6 +287,14 @@ describe('context', function() {
                 keys.should.have.length(1);
                 keys[0].should.equal("K1");
             });
+
+            it('should increase value in $parent', function() {
+                var context0 = Context.get("0","flowA");
+                var context1 = Context.get("1","flowB", context0);
+                context1.incr("$parent.K");
+                context0.get("K").should.equal(1);
+                
+            });
         });
 
     });
@@ -276,6 +305,7 @@ describe('context', function() {
         var stubGet = sandbox.stub();
         var stubSet = sandbox.stub();
         var stubKeys = sandbox.stub();
+        var stubIncr = sandbox.stub();
         var stubDelete = sandbox.stub().returns(Promise.resolve());
         var stubClean = sandbox.stub().returns(Promise.resolve());
         var stubOpen = sandbox.stub().returns(Promise.resolve());
@@ -283,6 +313,7 @@ describe('context', function() {
         var stubGet2 = sandbox.stub();
         var stubSet2 = sandbox.stub();
         var stubKeys2 = sandbox.stub();
+        var stubIncr2 = sandbox.stub();
         var stubDelete2 = sandbox.stub().returns(Promise.resolve());
         var stubClean2 = sandbox.stub().returns(Promise.resolve());
         var stubOpen2 = sandbox.stub().returns(Promise.resolve());
@@ -292,6 +323,7 @@ describe('context', function() {
             Test.prototype.get = stubGet;
             Test.prototype.set = stubSet;
             Test.prototype.keys = stubKeys;
+            Test.prototype.incr = stubIncr;
             Test.prototype.delete = stubDelete;
             Test.prototype.clean = stubClean;
             Test.prototype.open = stubOpen;
@@ -303,6 +335,7 @@ describe('context', function() {
             Test2.prototype.get = stubGet2;
             Test2.prototype.set = stubSet2;
             Test2.prototype.keys = stubKeys2;
+            Test2.prototype.incr = stubIncr2;
             Test2.prototype.delete = stubDelete2;
             Test2.prototype.clean = stubClean2;
             Test2.prototype.open = stubOpen2;
@@ -450,15 +483,17 @@ describe('context', function() {
         describe('store context',function() {
             it('should store local property to external context storage',function(done) {
                 Context.init({contextStorage:contextStorage});
-                var cb = function(){done("An error occurred")}
+                var cb = function(){done("An error occurred");};
                 Context.load().then(function(){
                     var context =  Context.get("1","flow");
                     context.set("foo","bar","test",cb);
                     context.get("foo","test",cb);
                     context.keys("test",cb);
+                    context.incr("foo",1,"test",cb);
                     stubSet.calledWithExactly("1:flow","foo","bar",cb).should.be.true();
                     stubGet.calledWith("1:flow","foo").should.be.true();
                     stubKeys.calledWithExactly("1:flow",cb).should.be.true();
+                    stubIncr.calledWithExactly("1:flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -470,9 +505,11 @@ describe('context', function() {
                     context.flow.set("foo","bar","test",cb);
                     context.flow.get("foo","test",cb);
                     context.flow.keys("test",cb);
+                    context.flow.incr("foo",1,"test",cb);
                     stubSet.calledWithExactly("flow","foo","bar",cb).should.be.true();
                     stubGet.calledWith("flow","foo").should.be.true();
                     stubKeys.calledWithExactly("flow",cb).should.be.true();
+                    stubIncr.calledWithExactly("flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -484,9 +521,11 @@ describe('context', function() {
                     context.global.set("foo","bar","test",cb);
                     context.global.get("foo","test",cb);
                     context.global.keys("test",cb);
+                    context.global.incr("foo",1,"test",cb);
                     stubSet.calledWithExactly("global","foo","bar",cb).should.be.true();
                     stubGet.calledWith("global","foo").should.be.true();
                     stubKeys.calledWith("global").should.be.true();
+                    stubIncr.calledWithExactly("global","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -498,12 +537,15 @@ describe('context', function() {
                     context.set("foo","bar","nonexist",cb);
                     context.get("foo","nonexist",cb);
                     context.keys("nonexist",cb);
+                    context.incr("foo",1,"nonexist",cb);
                     stubGet.called.should.be.false();
                     stubSet.called.should.be.false();
                     stubKeys.called.should.be.false();
+                    stubIncr.called.should.be.false();
                     stubSet2.calledWithExactly("1:flow","foo","bar",cb).should.be.true();
                     stubGet2.calledWith("1:flow","foo").should.be.true();
                     stubKeys2.calledWithExactly("1:flow",cb).should.be.true();
+                    stubIncr2.calledWithExactly("1:flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -515,12 +557,15 @@ describe('context', function() {
                     context.set("foo","bar","default",cb);
                     context.get("foo","default",cb);
                     context.keys("default",cb);
+                    context.incr("foo",1,"default",cb);
                     stubGet.called.should.be.false();
                     stubSet.called.should.be.false();
                     stubKeys.called.should.be.false();
+                    stubIncr.called.should.be.false();
                     stubSet2.calledWithExactly("1:flow","foo","bar",cb).should.be.true();
                     stubGet2.calledWith("1:flow","foo").should.be.true();
                     stubKeys2.calledWithExactly("1:flow",cb).should.be.true();
+                    stubIncr2.calledWithExactly("1:flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -532,12 +577,14 @@ describe('context', function() {
                     context.set("foo","alias",cb);
                     context.get("foo",cb);
                     context.keys(cb);
+                    context.incr("foo",1,cb);
                     stubGet.called.should.be.false();
                     stubSet.called.should.be.false();
                     stubKeys.called.should.be.false();
                     stubSet2.calledWithExactly("1:flow","foo","alias",cb).should.be.true();
                     stubGet2.calledWith("1:flow","foo").should.be.true();
                     stubKeys2.calledWithExactly("1:flow",cb).should.be.true();
+                    stubIncr2.calledWithExactly("1:flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -566,9 +613,11 @@ describe('context', function() {
                     context.set("foo","alias",cb);
                     context.get("foo",cb);
                     context.keys(cb);
+                    context.incr("foo",1,cb);
                     stubSet.calledWithExactly("1:flow","foo","alias",cb).should.be.true();
                     stubGet.calledWith("1:flow","foo").should.be.true();
                     stubKeys.calledWithExactly("1:flow",cb).should.be.true();
+                    stubIncr.calledWithExactly("1:flow","foo",1,cb).should.be.true();
                     done();
                 }).catch(done);
             });
@@ -926,6 +975,42 @@ describe('context', function() {
                 Context.load().then(function () {
                     var context = Context.get("1", "flow");
                     context.keys("memory");
+                    done();
+                }).catch(done);
+            });
+
+        });
+
+        describe('increment context', function () {
+            it('should change order of arguments properly when `amount` argument is not passed',function(done) {
+                Context.init({ contextStorage: contextDefaultStorage });
+                var cb = function(){done("An error occurred");};
+                Context.load().then(function(){
+                    var context =  Context.get("1","flow");
+                    context.incr("foo","test",cb);
+                    stubIncr.calledWithExactly("1:flow","foo",undefined,cb).should.be.true();
+                    done();
+                }).catch(done);
+            });
+
+            it('should change order of arguments properly when `storage` argument is not passed',function(done) {
+                Context.init({ contextStorage: contextDefaultStorage });
+                var cb = function(){done("An error occurred");};
+                Context.load().then(function(){
+                    var context =  Context.get("1","flow");
+                    context.incr("foo",1,cb);
+                    stubIncr2.calledWithExactly("1:flow","foo",1,cb).should.be.true();
+                    done();
+                }).catch(done);
+            });
+
+            it('should change order of arguments properly when `amount` and `storage` are not passed',function(done) {
+                Context.init({ contextStorage: contextDefaultStorage });
+                var cb = function(){done("An error occurred");};
+                Context.load().then(function(){
+                    var context =  Context.get("1","flow");
+                    context.incr("foo",cb);
+                    stubIncr2.calledWithExactly("1:flow","foo",undefined,cb).should.be.true();
                     done();
                 }).catch(done);
             });
