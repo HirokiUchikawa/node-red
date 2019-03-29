@@ -33,18 +33,18 @@ var apiAdmin = NR_TEST_UTILS.require("@node-red/editor-api/lib/admin");
 
 describe("api/index", function() {
     var beforeEach = function() {
-        sinon.stub(apiAuth,"init",function(){});
-        sinon.stub(apiEditor,"init",function(){
+        sinon.stub(apiAuth,"init").callsFake(function(){});
+        sinon.stub(apiEditor,"init").callsFake(function(){
             var app = express();
             app.get("/editor",function(req,res) { res.status(200).end(); });
             return app;
         });
-        sinon.stub(apiAdmin,"init",function(){
+        sinon.stub(apiAdmin,"init").callsFake(function(){
             var app = express();
             app.get("/admin",function(req,res) { res.status(200).end(); });
             return app;
         });
-        sinon.stub(apiAuth,"login",function(req,res){
+        sinon.stub(apiAuth,"login").callsFake(function(req,res){
             res.status(200).end();
         });
     };

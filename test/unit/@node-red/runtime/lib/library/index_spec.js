@@ -62,7 +62,7 @@ describe("runtime/library", function() {
                     }
                 }
             });
-            sinon.stub(fs,"readFile", function(path,opts,callback) {
+            sinon.stub(fs,"readFile").callsFake(function(path,opts,callback) {
                 if (path === "/tmp/test-module/abc") {
                     callback(null,"Example flow result");
                 } else if (path === "/tmp/@scope/test-module/abc") {

@@ -150,7 +150,7 @@ describe('Node', function() {
 
         it('handles thrown errors', function(done) {
             var n = new RedNode({id:'123',type:'abc'});
-            sinon.stub(n,"error",function(err,msg) {});
+            sinon.stub(n,"error").callsFake(function(err,msg) {});
             var message = {payload:"hello world"};
             n.on('input',function(msg) {
                 throw new Error("test error");
@@ -383,7 +383,7 @@ describe('Node', function() {
         it('produces a log message', function(done) {
             var n = new RedNode({id:'123',type:'abc',z:'789'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             n.log("a log message");
@@ -395,7 +395,7 @@ describe('Node', function() {
         it('produces a log message with a name', function(done) {
             var n = new RedNode({id:'123', type:'abc', name:"barney", z:'789'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             n.log("a log message");
@@ -410,7 +410,7 @@ describe('Node', function() {
         it('produces a warning message', function(done) {
             var n = new RedNode({id:'123',type:'abc',z:'789'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             n.warn("a warning");
@@ -461,7 +461,7 @@ describe('Node', function() {
         it('produces a metric message', function(done) {
             var n = new RedNode({id:'123',type:'abc'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             var msg = {payload:"foo", _msgid:"987654321"};
@@ -477,7 +477,7 @@ describe('Node', function() {
         it('returns metric value if eventname undefined', function(done) {
             var n = new RedNode({id:'123',type:'abc'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             var msg = {payload:"foo", _msgid:"987654321"};
@@ -489,7 +489,7 @@ describe('Node', function() {
         it('returns not defined if eventname defined', function(done) {
             var n = new RedNode({id:'123',type:'abc'});
             var loginfo = {};
-            sinon.stub(Log, 'log', function(msg) {
+            sinon.stub(Log, 'log').callsFake(function(msg) {
                 loginfo = msg;
             });
             var msg = {payload:"foo", _msgid:"987654321"};

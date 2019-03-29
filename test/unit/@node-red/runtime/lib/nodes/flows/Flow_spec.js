@@ -137,7 +137,7 @@ describe('Flow', function() {
     util.inherits(TestAsyncNode,Node);
 
     before(function() {
-        getType = sinon.stub(typeRegistry,"get",function(type) {
+        getType = sinon.stub(typeRegistry,"get").callsFake(function(type) {
             if (type=="test") {
                 return TestNode;
             } else if (type=="testError"){

@@ -62,9 +62,9 @@ describe("runtime", function() {
     }
     describe("init", function() {
         beforeEach(function() {
-            sinon.stub(log,"init",function() {});
-            sinon.stub(settings,"init",function() {});
-            sinon.stub(redNodes,"init",function() {})
+            sinon.stub(log,"init").callsFake(function() {});
+            sinon.stub(settings,"init").callsFake(function() {});
+            sinon.stub(redNodes,"init").callsFake(function() {})
         });
         afterEach(function() {
             log.init.restore();
@@ -101,14 +101,14 @@ describe("runtime", function() {
         var i18nRegisterMessageCatalog;
 
         beforeEach(function() {
-            storageInit = sinon.stub(storage,"init",function(settings) {return Promise.resolve();});
-            redNodesInit = sinon.stub(redNodes,"init", function() {});
-            redNodesLoad = sinon.stub(redNodes,"load", function() {return Promise.resolve()});
-            redNodesCleanModuleList = sinon.stub(redNodes,"cleanModuleList",function(){});
-            redNodesLoadFlows = sinon.stub(redNodes,"loadFlows",function() {return Promise.resolve()});
-            redNodesStartFlows = sinon.stub(redNodes,"startFlows",function() {});
-            redNodesLoadContextsPlugin = sinon.stub(redNodes,"loadContextsPlugin",function() {return Promise.resolve()});
-            i18nRegisterMessageCatalog = sinon.stub(util.i18n,"registerMessageCatalog",function() {return Promise.resolve()});
+            storageInit = sinon.stub(storage,"init").callsFake(function(settings) {return Promise.resolve();});
+            redNodesInit = sinon.stub(redNodes,"init").callsFake(function() {});
+            redNodesLoad = sinon.stub(redNodes,"load").callsFake(function() {return Promise.resolve()});
+            redNodesCleanModuleList = sinon.stub(redNodes,"cleanModuleList").callsFake(function(){});
+            redNodesLoadFlows = sinon.stub(redNodes,"loadFlows").callsFake(function() {return Promise.resolve()});
+            redNodesStartFlows = sinon.stub(redNodes,"startFlows").callsFake(function() {});
+            redNodesLoadContextsPlugin = sinon.stub(redNodes,"loadContextsPlugin").callsFake(function() {return Promise.resolve()});
+            i18nRegisterMessageCatalog = sinon.stub(util.i18n,"registerMessageCatalog").callsFake(function() {return Promise.resolve()});
         });
         afterEach(function() {
             storageInit.restore();
@@ -122,7 +122,7 @@ describe("runtime", function() {
             i18nRegisterMessageCatalog.restore();
         });
         it("reports errored/missing modules",function(done) {
-            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList", function(cb) {
+            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList").callsFake(function(cb) {
                 return [
                     {  err:"errored",name:"errName" }, // error
                     {  module:"module",enabled:true,loaded:false,types:["typeA","typeB"]} // missing
@@ -150,7 +150,7 @@ describe("runtime", function() {
             }).catch(err=>{done(err)});
         });
         it("initiates load of missing modules",function(done) {
-            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList", function(cb) {
+            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList").callsFake(function(cb) {
                 return [
                     {  err:"errored",name:"errName" }, // error
                     {  err:"errored",name:"errName" }, // error
@@ -158,7 +158,7 @@ describe("runtime", function() {
                     {  module:"node-red",enabled:true,loaded:false,types:["typeC","typeD"]} // missing
                 ].filter(cb);
             });
-            var serverInstallModule = sinon.stub(redNodes,"installModule",function(name) { return Promise.resolve({nodes:[]});});
+            var serverInstallModule = sinon.stub(redNodes,"installModule").callsFake(function(name) { return Promise.resolve({nodes:[]});});
             var util = mockUtil();
             runtime.init({testSettings: true, autoInstallModules:true, httpAdminRoot:"/", load:function() { return Promise.resolve();}},util);
             sinon.stub(console,"log");
@@ -181,7 +181,7 @@ describe("runtime", function() {
             }).catch(err=>{done(err)});
         });
         it("reports errored modules when verbose is enabled",function(done) {
-            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList", function(cb) {
+            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList").callsFake(function(cb) {
                 return [
                     {  err:"errored",name:"errName" } // error
                 ].filter(cb);
@@ -202,8 +202,8 @@ describe("runtime", function() {
         });
 
         it("reports runtime metrics",function(done) {
-            var stopFlows = sinon.stub(redNodes,"stopFlows",function() { return Promise.resolve();} );
-            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList", function() {return []});
+            var stopFlows = sinon.stub(redNodes,"stopFlows").callsFake(function() { return Promise.resolve();} );
+            redNodesGetNodeList = sinon.stub(redNodes,"getNodeList").callsFake(function() {return []});
             var util = mockUtil(true);
             runtime.init(
                 {testSettings: true, runtimeMetricInterval:200, httpAdminRoot:"/", load:function() { return Promise.resolve();}},
@@ -234,8 +234,8 @@ describe("runtime", function() {
     });
 
     it("stops components", function(done) {
-        var stopFlows = sinon.stub(redNodes,"stopFlows",function() { return Promise.resolve();} );
-        var closeContextsPlugin = sinon.stub(redNodes,"closeContextsPlugin",function() { return Promise.resolve();} );
+        var stopFlows = sinon.stub(redNodes,"stopFlows").callsFake(function() { return Promise.resolve();} );
+        var closeContextsPlugin = sinon.stub(redNodes,"closeContextsPlugin").callsFake(function() { return Promise.resolve();} );
         runtime.stop().then(function(){
             stopFlows.called.should.be.true();
             closeContextsPlugin.called.should.be.true();

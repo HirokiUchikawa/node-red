@@ -100,7 +100,7 @@ describe('nodes/registry/installer', function() {
             var p = Promise.reject(res);
             p.catch((err)=>{});
             initInstaller(p)
-            sinon.stub(typeRegistry,"getModuleInfo", function() {
+            sinon.stub(typeRegistry,"getModuleInfo").callsFake(function() {
                 return {
                     version: "0.1.1"
                 }
@@ -111,7 +111,7 @@ describe('nodes/registry/installer', function() {
             });
         });
         it("rejects when update requested to existing version", function(done) {
-            sinon.stub(typeRegistry,"getModuleInfo", function() {
+            sinon.stub(typeRegistry,"getModuleInfo").callsFake(function() {
                 return {
                     version: "0.1.1"
                 }
@@ -148,7 +148,7 @@ describe('nodes/registry/installer', function() {
             p.catch((err)=>{});
             initInstaller(p)
 
-            var addModule = sinon.stub(registry,"addModule",function(md) {
+            var addModule = sinon.stub(registry,"addModule").callsFake(function(md) {
                 return when.resolve(nodeInfo);
             });
 
@@ -181,7 +181,7 @@ describe('nodes/registry/installer', function() {
         });
         it("succeeds when path is valid node-red module", function(done) {
             var nodeInfo = {nodes:{module:"foo",types:["a"]}};
-            var addModule = sinon.stub(registry,"addModule",function(md) {
+            var addModule = sinon.stub(registry,"addModule").callsFake(function(md) {
                 return when.resolve(nodeInfo);
             });
             var resourcesDir = path.resolve(path.join(__dirname,"resources","local","TestNodeModule","node_modules","TestNodeModule"));
@@ -217,7 +217,7 @@ describe('nodes/registry/installer', function() {
 
         it("rejects with generic error", function(done) {
             var nodeInfo = [{module:"foo",types:["a"]}];
-            var removeModule = sinon.stub(registry,"removeModule",function(md) {
+            var removeModule = sinon.stub(registry,"removeModule").callsFake(function(md) {
                 return when.resolve(nodeInfo);
             });
             var res = {
@@ -237,10 +237,10 @@ describe('nodes/registry/installer', function() {
         });
         it("succeeds when module is found", function(done) {
             var nodeInfo = [{module:"foo",types:["a"]}];
-            var removeModule = sinon.stub(typeRegistry,"removeModule",function(md) {
+            var removeModule = sinon.stub(typeRegistry,"removeModule").callsFake(function(md) {
                 return nodeInfo;
             });
-            var getModuleInfo = sinon.stub(registry,"getModuleInfo",function(md) {
+            var getModuleInfo = sinon.stub(registry,"getModuleInfo").callsFake(function(md) {
                 return {nodes:[]};
             });
             var res = {
@@ -252,7 +252,7 @@ describe('nodes/registry/installer', function() {
             p.catch((err)=>{});
             initInstaller(p)
 
-            sinon.stub(fs,"statSync", function(fn) { return {}; });
+            sinon.stub(fs,"statSync").callsFake(function(fn) { return {}; });
 
             installer.uninstallModule("this_wont_exist").then(function(info) {
                 info.should.eql(nodeInfo);

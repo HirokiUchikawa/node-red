@@ -47,8 +47,8 @@ describe("red/nodes/registry/loader",function() {
 
     describe("#load",function() {
         it("load empty set without settings available", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){ return {};}));
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return {};}));
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){ return {};}));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return {};}));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return false;}}});
             loader.load(true).then(function() {
                 localfilesystem.getNodeFiles.called.should.be.true();
@@ -58,8 +58,8 @@ describe("red/nodes/registry/loader",function() {
             })
         });
         it("load empty set with settings available triggers registery save", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){ return {};}));
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return {};}));
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){ return {};}));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return {};}));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
             loader.load(true).then(function() {
                 registry.saveNodeList.called.should.be.true();
@@ -70,7 +70,7 @@ describe("red/nodes/registry/loader",function() {
         });
 
         it("load core node files scanned by lfs - single node single file", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -86,10 +86,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
 
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -125,7 +125,7 @@ describe("red/nodes/registry/loader",function() {
         });
 
         it("load core node files scanned by lfs - multiple nodes single file", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -141,10 +141,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
             loader.load().then(function(result) {
@@ -185,7 +185,7 @@ describe("red/nodes/registry/loader",function() {
 
 
         it("load core node files scanned by lfs - node with promise", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -201,10 +201,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
 
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -243,7 +243,7 @@ describe("red/nodes/registry/loader",function() {
 
 
         it("load core node files scanned by lfs - node with rejecting promise", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -259,10 +259,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
 
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -297,7 +297,7 @@ describe("red/nodes/registry/loader",function() {
         });
 
         it("load core node files scanned by lfs - missing file", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -313,10 +313,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
 
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -350,7 +350,7 @@ describe("red/nodes/registry/loader",function() {
         });
 
         it("load core node files scanned by lfs - missing html file", function(done) {
-            stubs.push(sinon.stub(localfilesystem,"getNodeFiles", function(){
+            stubs.push(sinon.stub(localfilesystem,"getNodeFiles").callsFake(function(){
                 var result = {};
                 result["node-red"] = {
                     "name": "node-red",
@@ -366,10 +366,10 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
 
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -415,7 +415,7 @@ describe("red/nodes/registry/loader",function() {
         });
 
         it("returns rejected error if module already loaded", function(done) {
-            stubs.push(sinon.stub(registry,"getModuleInfo",function(){return{}}));
+            stubs.push(sinon.stub(registry,"getModuleInfo").callsFake(function(){return{}}));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
 
             loader.addModule("test-module").catch(function(err) {
@@ -424,8 +424,8 @@ describe("red/nodes/registry/loader",function() {
             });
         });
         it("returns rejected error if module not found", function(done) {
-            stubs.push(sinon.stub(registry,"getModuleInfo",function(){return null}));
-            stubs.push(sinon.stub(localfilesystem,"getModuleFiles",function() {
+            stubs.push(sinon.stub(registry,"getModuleInfo").callsFake(function(){return null}));
+            stubs.push(sinon.stub(localfilesystem,"getModuleFiles").callsFake(function() {
                 throw new Error("failure");
             }));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
@@ -438,9 +438,9 @@ describe("red/nodes/registry/loader",function() {
 
         it("loads module by name", function(done) {
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
-            stubs.push(sinon.stub(registry,"getModuleInfo",function(){ return null; }));
-            stubs.push(sinon.stub(localfilesystem,"getModuleFiles", function(){
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getModuleInfo").callsFake(function(){ return null; }));
+            stubs.push(sinon.stub(localfilesystem,"getModuleFiles").callsFake(function(){
                 var result = {};
                 result["TestNodeModule"] = {
                     "name": "TestNodeModule",
@@ -457,8 +457,8 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return "a node list" }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return "a node list" }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({nodes:nodes,log:{info:function(){},_:function(){}},settings:{available:function(){return true;}}});
             loader.addModule("TestNodeModule").then(function(result) {
@@ -494,9 +494,9 @@ describe("red/nodes/registry/loader",function() {
 
         it("skips module that fails version check", function(done) {
             // This module isn't already loaded
-            stubs.push(sinon.stub(registry,"getNodeInfo", function(){ return null; }));
-            stubs.push(sinon.stub(registry,"getModuleInfo",function(){ return null; }));
-            stubs.push(sinon.stub(localfilesystem,"getModuleFiles", function(){
+            stubs.push(sinon.stub(registry,"getNodeInfo").callsFake(function(){ return null; }));
+            stubs.push(sinon.stub(registry,"getModuleInfo").callsFake(function(){ return null; }));
+            stubs.push(sinon.stub(localfilesystem,"getModuleFiles").callsFake(function(){
                 var result = {};
                 result["TestNodeModule"] = {
                     "name": "TestNodeModule",
@@ -514,8 +514,8 @@ describe("red/nodes/registry/loader",function() {
                 return result;
             }));
 
-            stubs.push(sinon.stub(registry,"saveNodeList", function(){ return "a node list" }));
-            stubs.push(sinon.stub(registry,"addModule", function(){ return }));
+            stubs.push(sinon.stub(registry,"saveNodeList").callsFake(function(){ return "a node list" }));
+            stubs.push(sinon.stub(registry,"addModule").callsFake(function(){ return }));
             stubs.push(sinon.stub(nodes,"registerType"));
             loader.init({log:{"_":function(){},warn:function(){}},nodes:nodes,version: function() { return "0.12.0"}, settings:{available:function(){return true;}}});
             loader.addModule("TestNodeModule").then(function(result) {
@@ -577,7 +577,7 @@ describe("red/nodes/registry/loader",function() {
             },"en").should.eql("foo");
         });
         it("loads help, caching result", function() {
-            stubs.push(sinon.stub(fs,"readFileSync", function(path) {
+            stubs.push(sinon.stub(fs,"readFileSync").callsFake(function(path) {
                 return 'bar';
             }))
             var node = {
@@ -594,7 +594,7 @@ describe("red/nodes/registry/loader",function() {
             fs.readFileSync.calledOnce.should.be.true();
         });
         it("loads help, defaulting to en-US content", function() {
-            stubs.push(sinon.stub(fs,"readFileSync", function(path) {
+            stubs.push(sinon.stub(fs,"readFileSync").callsFake(function(path) {
                 throw new Error("not found");
             }))
             var node = {
@@ -611,7 +611,7 @@ describe("red/nodes/registry/loader",function() {
             fs.readFileSync.calledOnce.should.be.true();
         });
         it("loads help, defaulting to en-US content for extra nodes", function() {
-            stubs.push(sinon.stub(fs,"readFileSync", function(path) {
+            stubs.push(sinon.stub(fs,"readFileSync").callsFake(function(path) {
                 if (path.indexOf("en-US") >= 0) {
                     return 'bar';
                 }
@@ -632,7 +632,7 @@ describe("red/nodes/registry/loader",function() {
             fs.readFileSync.calledTwice.should.be.true();
         });
         it("fails to load en-US help content", function() {
-            stubs.push(sinon.stub(fs,"readFileSync", function(path) {
+            stubs.push(sinon.stub(fs,"readFileSync").callsFake(function(path) {
                 throw new Error("not found");
             }));
             var node = {

@@ -42,7 +42,7 @@ describe("api/admin/nodes", function() {
         app.put(/\/nodes\/((@[^\/]+\/)?[^\/]+)\/([^\/]+)$/,nodes.putSet);
         app.get("/getIcons",nodes.getIcons);
         app.delete(/\/nodes\/((@[^\/]+\/)?[^\/]+)$/,nodes.delete);
-        sinon.stub(apiUtil,"determineLangFromHeaders", function() {
+        sinon.stub(apiUtil,"determineLangFromHeaders").callsFake(function() {
             return "en-US";
         });
     });

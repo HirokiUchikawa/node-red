@@ -50,10 +50,10 @@ describe('red/registry/index', function() {
 
     describe('#addModule', function() {
         it('loads the module and returns its info', function(done) {
-            stubs.push(sinon.stub(loader,"addModule",function(module) {
+            stubs.push(sinon.stub(loader,"addModule").callsFake(function(module) {
                 return when.resolve();
             }));
-            stubs.push(sinon.stub(typeRegistry,"getModuleInfo", function(module) {
+            stubs.push(sinon.stub(typeRegistry,"getModuleInfo").callsFake(function(module) {
                 return "info";
             }));
             registry.addModule("foo").then(function(info) {
@@ -62,10 +62,10 @@ describe('red/registry/index', function() {
             }).catch(function(err) { done(err); });
         });
         it('rejects if loader rejects', function(done) {
-            stubs.push(sinon.stub(loader,"addModule",function(module) {
+            stubs.push(sinon.stub(loader,"addModule").callsFake(function(module) {
                 return when.reject("error");
             }));
-            stubs.push(sinon.stub(typeRegistry,"getModuleInfo", function(module) {
+            stubs.push(sinon.stub(typeRegistry,"getModuleInfo").callsFake(function(module) {
                 return "info";
             }));
             registry.addModule("foo").then(function(info) {
@@ -79,10 +79,10 @@ describe('red/registry/index', function() {
 
     describe('#enableNode',function() {
         it('enables a node set',function(done) {
-            stubs.push(sinon.stub(typeRegistry,"enableNodeSet",function() {
+            stubs.push(sinon.stub(typeRegistry,"enableNodeSet").callsFake(function() {
                 return when.resolve();
             }));
-            stubs.push(sinon.stub(typeRegistry,"getNodeInfo", function() {
+            stubs.push(sinon.stub(typeRegistry,"getNodeInfo").callsFake(function() {
                 return {id:"node-set",loaded:true};
             }));
             registry.enableNode("node-set").then(function(ns) {
@@ -93,7 +93,7 @@ describe('red/registry/index', function() {
         });
 
         it('rejects if node unknown',function() {
-            stubs.push(sinon.stub(typeRegistry,"enableNodeSet",function() {
+            stubs.push(sinon.stub(typeRegistry,"enableNodeSet").callsFake(function() {
                 throw new Error('failure');
             }));
             /*jshint immed: false */
@@ -103,15 +103,15 @@ describe('red/registry/index', function() {
         });
 
         it('triggers a node load',function(done) {
-            stubs.push(sinon.stub(typeRegistry,"enableNodeSet",function() {
+            stubs.push(sinon.stub(typeRegistry,"enableNodeSet").callsFake(function() {
                 return when.resolve();
             }));
             var calls = 0;
-            stubs.push(sinon.stub(typeRegistry,"getNodeInfo", function() {
+            stubs.push(sinon.stub(typeRegistry,"getNodeInfo").callsFake(function() {
                 // loaded=false on first call, true on subsequent
                 return {id:"node-set",loaded:(calls++>0)};
             }));
-            stubs.push(sinon.stub(loader,"loadNodeSet",function(){return when.resolve();}));
+            stubs.push(sinon.stub(loader,"loadNodeSet").callsFake(function(){return when.resolve();}));
             stubs.push(sinon.stub(typeRegistry,"getFullNodeInfo"));
 
             registry.enableNode("node-set").then(function(ns) {

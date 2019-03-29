@@ -50,7 +50,7 @@ describe('flows/index', function() {
 
 
     before(function() {
-        getType = sinon.stub(typeRegistry,"get",function(type) {
+        getType = sinon.stub(typeRegistry,"get").callsFake(function(type) {
             return type.indexOf('missing') === -1;
         });
     });
@@ -61,16 +61,16 @@ describe('flows/index', function() {
 
     beforeEach(function() {
         eventsOn = sinon.spy(events,"on");
-        credentialsClean = sinon.stub(credentials,"clean",function(conf) {
+        credentialsClean = sinon.stub(credentials,"clean").callsFake(function(conf) {
             conf.forEach(function(n) {
                 delete n.credentials;
             });
             return when.resolve();
         });
-        credentialsLoad = sinon.stub(credentials,"load",function() {
+        credentialsLoad = sinon.stub(credentials,"load").callsFake(function() {
             return when.resolve();
         });
-        flowCreate = sinon.stub(Flow,"create",function(parent, global, flow) {
+        flowCreate = sinon.stub(Flow,"create").callsFake(function(parent, global, flow) {
             var id;
             if (typeof flow === 'undefined') {
                 flow = global;
@@ -465,7 +465,7 @@ describe('flows/index', function() {
     describe('#checkTypeInUse', function() {
 
         before(function() {
-            sinon.stub(typeRegistry,"getNodeInfo",function(id) {
+            sinon.stub(typeRegistry,"getNodeInfo").callsFake(function(id) {
                 if (id === 'unused-module') {
                     return {types:['one','two','three']}
                 } else {

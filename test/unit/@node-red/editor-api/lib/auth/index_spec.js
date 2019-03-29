@@ -59,7 +59,7 @@ describe("api/auth/index",function() {
 
     describe("revoke", function() {
         it("revokes a token", function(done) {
-            var revokeToken = sinon.stub(Tokens,"revoke",function() {
+            var revokeToken = sinon.stub(Tokens,"revoke").callsFake(function() {
                 return when.resolve();
             });
 
@@ -80,8 +80,8 @@ describe("api/auth/index",function() {
 
     describe("login", function() {
         beforeEach(function() {
-            sinon.stub(Tokens,"init",function(){});
-            sinon.stub(Users,"init",function(){});
+            sinon.stub(Tokens,"init").callsFake(function(){});
+            sinon.stub(Users,"init").callsFake(function(){});
         });
         afterEach(function() {
             Tokens.init.restore();
@@ -120,8 +120,8 @@ describe("api/auth/index",function() {
     });
     describe("needsPermission", function() {
         beforeEach(function() {
-            sinon.stub(Tokens,"init",function(){});
-            sinon.stub(Users,"init",function(){});
+            sinon.stub(Tokens,"init").callsFake(function(){});
+            sinon.stub(Users,"init").callsFake(function(){});
         });
         afterEach(function() {
             Tokens.init.restore();
@@ -136,7 +136,7 @@ describe("api/auth/index",function() {
 
 
         it('no-ops if adminAuth not set', function(done) {
-            sinon.stub(passport,"authenticate",function(scopes,opts) {
+            sinon.stub(passport,"authenticate").callsFake(function(scopes,opts) {
                 return function(req,res,next) {
                 }
             });
@@ -148,12 +148,12 @@ describe("api/auth/index",function() {
             })
         });
         it('skips auth if req.user undefined', function(done) {
-            sinon.stub(passport,"authenticate",function(scopes,opts) {
+            sinon.stub(passport,"authenticate").callsFake(function(scopes,opts) {
                 return function(req,res,next) {
                     next();
                 }
             });
-            sinon.stub(Permissions,"hasPermission",function(perm) { return true });
+            sinon.stub(Permissions,"hasPermission").callsFake(function(perm) { return true });
             auth.init({adminAuth:{}});
             var func = auth.needsPermission("foo");
             func({user:null},{},function() {
@@ -168,12 +168,12 @@ describe("api/auth/index",function() {
         });
 
         it('passes for valid user permission', function(done) {
-            sinon.stub(passport,"authenticate",function(scopes,opts) {
+            sinon.stub(passport,"authenticate").callsFake(function(scopes,opts) {
                 return function(req,res,next) {
                     next();
                 }
             });
-            sinon.stub(Permissions,"hasPermission",function(perm) { return true });
+            sinon.stub(Permissions,"hasPermission").callsFake(function(perm) { return true });
             auth.init({adminAuth:{}});
             var func = auth.needsPermission("foo");
             func({user:true,authInfo: { scope: "read"}},{},function() {
@@ -190,12 +190,12 @@ describe("api/auth/index",function() {
         });
 
         it('rejects for invalid user permission', function(done) {
-            sinon.stub(passport,"authenticate",function(scopes,opts) {
+            sinon.stub(passport,"authenticate").callsFake(function(scopes,opts) {
                 return function(req,res,next) {
                     next();
                 }
             });
-            sinon.stub(Permissions,"hasPermission",function(perm) { return false });
+            sinon.stub(Permissions,"hasPermission").callsFake(function(perm) { return false });
             auth.init({adminAuth:{}});
             var func = auth.needsPermission("foo");
             func({user:true,authInfo: { scope: "read"}},{
